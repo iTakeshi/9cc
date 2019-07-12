@@ -87,7 +87,7 @@ Token * tokenize(char * p) {
             continue;
         }
 
-        if (*p == '+' || *p == '-' || *p == '*' || *p == '/') {
+        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
             cur = new_token(TK_RESERVED, cur, p++);
             continue;
         }
@@ -137,8 +137,20 @@ Node * new_node_num(int val) {
     return node;
 }
 
+Node * expr(); // forward decl
+
+Node * term() {
+    if (consume('(')) {
+        Node * node = expr();
+        expect(')');
+        return node;
+    } else {
+        return new_node_num(expect_number());
+    }
+}
+
 Node * mul() {
-    Node * node = new_node_num(expect_number());
+    Node * node = term();
 
     while (true) {
         if (consume('*')) {
