@@ -149,14 +149,24 @@ Node * term() {
     }
 }
 
+Node * unary() {
+    if (consume('+')) {
+        return term();
+    } else if (consume('-')) {
+        return new_node(ND_SUB, new_node_num(0), term());
+    } else {
+        return term();
+    }
+}
+
 Node * mul() {
-    Node * node = term();
+    Node * node = unary();
 
     while (true) {
         if (consume('*')) {
-            node = new_node(ND_MUL, node, mul());
+            node = new_node(ND_MUL, node, unary());
         } else if (consume('/')) {
-            node = new_node(ND_DIV, node, mul());
+            node = new_node(ND_DIV, node, unary());
         } else {
             return node;
         }
