@@ -43,7 +43,7 @@ int expect_number() {
     return val;
 }
 
-Token * new_token(TokenKind kind, Token * cur, char * str, int len) {
+Token * new_token(TokenKind kind, Token * cur, char * str, size_t len) {
     Token * tok = calloc(1, sizeof(Token));
     tok->kind = kind;
     tok->str = str;

@@ -99,4 +99,5 @@ Node * equality() {
 
 Node * expr() {
     Node * node = equality();
+    return node;
 }

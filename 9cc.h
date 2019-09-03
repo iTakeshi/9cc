@@ -13,7 +13,7 @@ struct Token {
     Token * next;
     int val;
     char * str;
-    int len;
+    size_t len;
 };
 
 typedef enum {
