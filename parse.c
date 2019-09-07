@@ -64,6 +64,11 @@ Node * new_node_num(int val) {
 
 Node * expr();  // forward declaration
 
+/*
+ * primary ::= "(" expr ")"
+ *           | ident
+ *           | num
+ */
 Node * primary() {
     if (consume("(")) {
         Node * node = expr();
@@ -97,6 +102,10 @@ Node * primary() {
     return new_node_num(expect_number());
 }
 
+/*
+ * unary ::= ("+" | "-") primary
+ *         | primary
+ */
 Node * unary() {
     if (consume("+")) {
         return primary();
@@ -107,6 +116,9 @@ Node * unary() {
     }
 }
 
+/*
+ * mul ::= unary (("*" | "/") unary)*
+ */
 Node * mul() {
     Node * node = unary();
 
@@ -121,6 +133,9 @@ Node * mul() {
     }
 }
 
+/*
+ * add ::= mul (("+" | "-") mul)*
+ */
 Node * add() {
     Node * node = mul();
 
@@ -135,6 +150,9 @@ Node * add() {
     }
 }
 
+/*
+ * relational ::= add (("<" | ">" | "<=" | ">=") add)*
+ */
 Node * relational() {
     Node * node = add();
 
@@ -153,6 +171,9 @@ Node * relational() {
     }
 }
 
+/*
+ * equality ::= relational (("==" | "!=") relational)*
+ */
 Node * equality() {
     Node * node = relational();
 
@@ -167,6 +188,9 @@ Node * equality() {
     }
 }
 
+/*
+ * assign ::= equality ("=" assign)?
+ */
 Node * assign() {
     Node * node = equality();
 
@@ -177,11 +201,22 @@ Node * assign() {
     }
 }
 
+/*
+ * expr ::= assign
+ */
 Node * expr() {
     Node * node = assign();
     return node;
 }
 
+/*
+ * stmt ::= block
+ *        | "if" "(" expr ")" stmt ("else" stmt)?
+ *        | "while" "(" expr ")" stmt
+ *        | "for" "(" expr? ";" expr? ";" expr" ")" stmt
+ *        | "return" expr ";"
+ *        | expr ";"
+ */
 Node * stmt() {
     Node * node;
 
@@ -255,6 +290,9 @@ Node * stmt() {
     return node;
 }
 
+/*
+ * program ::= stmt*
+ */
 void parse() {
     Node * cur = NULL;
     while (!at_eof()) {
