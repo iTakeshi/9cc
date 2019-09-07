@@ -204,6 +204,28 @@ Node * stmt() {
         node->thn = stmt();
         node->els = NULL;
 
+    } else if (consume("for")) {
+        node = calloc(1, sizeof(Node));
+        node->kind = ND_FOR;
+        expect("(");
+        node->ini = NULL;
+        if (!consume(";")) {
+            node->ini = expr();
+            expect(";");
+        }
+        node->cnd = NULL;
+        if (!consume(";")) {
+            node->cnd = expr();
+            expect(";");
+        }
+        node->inc = NULL;
+        if (!consume(")")) {
+            node->inc = expr();
+            expect(")");
+        }
+        node->thn = stmt();
+        node->els = NULL;
+
     } else if (consume("return")) {
         node = new_node(ND_RETURN, NULL, expr());
         expect(";");

@@ -30,6 +30,7 @@ struct Local {
 typedef enum {
     ND_IF,
     ND_WHILE,
+    ND_FOR,
     ND_RETURN,
     ND_ASSIGN,
     ND_VAR,
@@ -52,7 +53,9 @@ struct Node {
     Node * lhs;
     Node * rhs;
 
+    Node * ini;
     Node * cnd;
+    Node * inc;
     Node * thn;
     Node * els;
 

@@ -39,6 +39,22 @@ void gen_node(Node * node) {
             printf(".Lend%ld:\n", id);
             return;
 
+        case ND_FOR:
+            id++;
+            if (node->ini) gen_node(node->ini);
+            printf(".Lbegin%ld:\n", id);
+            if (node->cnd) {
+                gen_node(node->cnd);
+                printf("  pop rax\n");
+                printf("  cmp rax, 0\n");
+                printf("  je  .Lend%ld\n", id);
+            }
+            gen_node(node->thn);
+            if (node->inc) gen_node(node->inc);
+            printf("  jmp .Lbegin%ld\n", id);
+            printf(".Lend%ld:\n", id);
+            return;
+
         case ND_RETURN:
             gen_node(node->rhs);
             printf("  pop rax\n");
