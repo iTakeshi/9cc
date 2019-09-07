@@ -103,16 +103,39 @@ Node * primary() {
 }
 
 /*
- * unary ::= ("+" | "-") primary
- *         | primary
+ * postfix ::= postfix ("++" | "--")
+ *           | primary
+ */
+Node * postfix() {
+    Node * node = primary();
+
+    while (true) {
+        if (consume("++")) {
+            node = new_node(ND_PST_INC, node, NULL);
+        } else if (consume("--")) {
+            node = new_node(ND_PST_DEC, node, NULL);
+        } else {
+            return node;
+        }
+    }
+}
+
+/*
+ * unary ::= ("++" | "--") unary
+ *         | ("+" | "-") unary
+ *         | postfix
  */
 Node * unary() {
-    if (consume("+")) {
-        return primary();
+    if (consume("++")) {
+        return new_node(ND_PRE_INC, NULL, unary());
+    } else if (consume("--")) {
+        return new_node(ND_PRE_DEC, NULL, unary());
+    } else if (consume("+")) {
+        return unary();
     } else if (consume("-")) {
-        return new_node(ND_SUB, new_node_num(0), primary());
+        return new_node(ND_SUB, new_node_num(0), unary());
     } else {
-        return primary();
+        return postfix();
     }
 }
 

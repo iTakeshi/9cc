@@ -111,8 +111,53 @@ void gen_node(Node * node) {
             printf("  push %d\n", node->val);
             return;
 
+        case ND_PRE_INC:
+            gen_lval(node->rhs);
+            printf("  mov rax, [rax]\n");
+            printf("  add rax, 1\n");
+            printf("  push rax\n");
+            printf("  pop rdi\n");
+            printf("  pop rax\n");
+            printf("  mov [rax], rdi\n");
+            printf("  push rdi\n");
+            return;
 
+        case ND_PRE_DEC:
+            gen_lval(node->rhs);
+            printf("  mov rax, [rax]\n");
+            printf("  sub rax, 1\n");
+            printf("  push rax\n");
+            printf("  pop rdi\n");
+            printf("  pop rax\n");
+            printf("  mov [rax], rdi\n");
+            printf("  push rdi\n");
+            return;
 
+        case ND_PST_INC:
+            gen_lval(node->lhs);
+            printf("  push [rax]\n");
+            printf("  mov rax, [rax]\n");
+            printf("  add rax, 1\n");
+            printf("  push rax\n");
+            printf("  pop rdi\n");
+            printf("  pop rsi\n");
+            printf("  pop rax\n");
+            printf("  mov [rax], rdi\n");
+            printf("  push rsi\n");
+            return;
+
+        case ND_PST_DEC:
+            gen_lval(node->lhs);
+            printf("  push [rax]\n");
+            printf("  mov rax, [rax]\n");
+            printf("  sub rax, 1\n");
+            printf("  push rax\n");
+            printf("  pop rdi\n");
+            printf("  pop rsi\n");
+            printf("  pop rax\n");
+            printf("  mov [rax], rdi\n");
+            printf("  push rsi\n");
+            return;
 
         case ND_ADD:
             gen_binop(node);
