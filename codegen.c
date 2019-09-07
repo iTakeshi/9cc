@@ -12,6 +12,14 @@ void gen_lval(Node * node) {
 
 void gen_node(Node * node) {
     switch (node->kind) {
+        case ND_RETURN:
+            gen_node(node->rhs);
+            printf("  pop rax\n");
+            printf("  mov rsp, rbp\n");
+            printf("  pop rbp\n");
+            printf("  ret\n");
+            return;
+
         case ND_ASSIGN:
             gen_lval(node->lhs);
             gen_node(node->rhs);

@@ -3,8 +3,8 @@
 
 #include "9cc.h"
 
-bool consume(char * op) {
-    if (token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(op, token->str, token->len) != 0) {
+bool consume(char * str) {
+    if (token->kind != TK_RESERVED || strlen(str) != token->len || memcmp(str, token->str, token->len) != 0) {
         return false;
     }
     token = token->next;
@@ -20,9 +20,9 @@ Token * consume_ident() {
     return res;
 }
 
-void expect(char * op) {
-    if (token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(op, token->str, token->len) != 0) {
-        error_at(token->str, "Unexpected character; expected '%s'", op);
+void expect(char * str) {
+    if (token->kind != TK_RESERVED || strlen(str) != token->len || memcmp(str, token->str, token->len) != 0) {
+        error_at(token->str, "Unexpected character; expected '%s'", str);
     }
     token = token->next;
 }
@@ -183,7 +183,12 @@ Node * expr() {
 }
 
 Node * stmt() {
-    Node * node = expr();
+    Node * node;
+    if (consume("return")) {
+        node = new_node(ND_RETURN, NULL, expr());
+    } else {
+        node = expr();
+    }
     expect(";");
     return node;
 }

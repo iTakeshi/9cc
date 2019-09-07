@@ -28,6 +28,7 @@ struct Local {
 };
 
 typedef enum {
+    ND_RETURN,
     ND_ASSIGN,
     ND_VAR,
     ND_ADD,
