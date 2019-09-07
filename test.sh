@@ -54,8 +54,12 @@ try 3 "1; 2; 3;"
 try 14 "a = 3; b = 5 * 6 - 8; a + b / 2;"
 try 14 "foo = 3; bar = 5 * 6 - 8; foo + bar / 2;"
 
-echo "===== Return Statement ====="
+echo "===== Control Statement ====="
 try 2 "1; return 2; 3;"
 try 22 "foo = 3; return bar = 5 * 6 - 8; return foo + bar / 2;"
+try 10 "if (1) 10;"
+try 10 "if (1) 10; else 20;"
+try 20 "if (0) 10; else 20;"
+try 11 "a = 1; if (a == 1) return b = a * 10 + 1;"
 
 echo "OK"

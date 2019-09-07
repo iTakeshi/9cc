@@ -11,7 +11,22 @@ void gen_lval(Node * node) {
 }
 
 void gen_node(Node * node) {
+    static size_t id = 0;
+
     switch (node->kind) {
+        case ND_IF:
+            id++;
+            gen_node(node->cnd);
+            printf("  pop rax\n");
+            printf("  cmp rax, 0\n");
+            printf("  je  .Lfalse%ld\n", id);
+            gen_node(node->thn);
+            printf("  jmp .Lend%ld\n", id);
+            printf(".Lfalse%ld:\n", id);
+            if (node->els) gen_node(node->els);
+            printf(".Lend%ld:\n", id);
+            return;
+
         case ND_RETURN:
             gen_node(node->rhs);
             printf("  pop rax\n");

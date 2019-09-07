@@ -184,12 +184,26 @@ Node * expr() {
 
 Node * stmt() {
     Node * node;
-    if (consume("return")) {
+
+    if (consume("if")) {
+        node = calloc(1, sizeof(Node));
+        node->kind = ND_IF;
+        expect("(");
+        node->cnd = expr();
+        expect(")");
+        node->thn = stmt();
+        node->els = NULL;
+        if (consume("else")) node->els = stmt();
+
+    } else if (consume("return")) {
         node = new_node(ND_RETURN, NULL, expr());
+        expect(";");
+
     } else {
         node = expr();
+        expect(";");
     }
-    expect(";");
+
     return node;
 }
 

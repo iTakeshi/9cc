@@ -28,6 +28,7 @@ struct Local {
 };
 
 typedef enum {
+    ND_IF,
     ND_RETURN,
     ND_ASSIGN,
     ND_VAR,
@@ -46,8 +47,14 @@ typedef struct Node Node;
 
 struct Node {
     NodeKind kind;
+
     Node * lhs;
     Node * rhs;
+
+    Node * cnd;
+    Node * thn;
+    Node * els;
+
     int val;
     size_t offset;
 };
