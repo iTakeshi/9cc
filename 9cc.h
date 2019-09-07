@@ -50,6 +50,8 @@ typedef struct Node Node;
 struct Node {
     NodeKind kind;
 
+    Node * next;
+
     Node * lhs;
     Node * rhs;
 
@@ -66,14 +68,14 @@ struct Node {
 // gloval variables
 extern Token * token;
 extern char * user_input;
-extern Node * code[100];
+extern Node * program;
 extern Local * locals;
 
 // tokenize.c
 void tokenize();
 
 // parse.c
-void program();
+void parse();
 
 // codegen.c
 void codegen();

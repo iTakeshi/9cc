@@ -157,8 +157,8 @@ void codegen() {
     printf("  mov rbp, rsp\n");
     printf("  sub rsp, %ld\n", calc_stack_size());
 
-    for (int i = 0; code[i]; i++) {
-        gen_node(code[i]);
+    for (Node * statement = program; statement; statement = statement->next) {
+        gen_node(statement);
         printf("  pop rax\n");
     }
 

@@ -2,7 +2,7 @@
 
 Token * token;
 char * user_input;
-Node * code[100] = {};
+Node * program = NULL;
 Local * locals = NULL;
 
 int main(int argc, char ** argv) {
@@ -12,7 +12,7 @@ int main(int argc, char ** argv) {
 
     user_input = argv[1];
     tokenize();
-    program();
+    parse();
     codegen();
 
     return 0;

@@ -238,8 +238,18 @@ Node * stmt() {
     return node;
 }
 
-void program() {
-    for (int i = 0; !at_eof(); i++) {
-        code[i] = stmt();
+void parse() {
+    Node * cur = NULL;
+    while (!at_eof()) {
+        Node * next = stmt();
+        next->next = NULL;
+        if (cur) {
+            cur->next = next;
+            cur = next;
+        } else {
+            // retain head
+            program = next;
+            cur = program;
+        }
     }
 }
