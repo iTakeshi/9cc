@@ -4,6 +4,14 @@
 
 #include "9cc.h"
 
+bool isalpha_(char c) {
+    return isalpha(c) || c == '_';
+}
+
+bool isalnum_(char c) {
+    return isalnum(c) || c == '_';
+}
+
 Token * new_token(TokenKind kind, Token * cur, char * str, size_t len) {
     Token * tok = calloc(1, sizeof(Token));
     tok->kind = kind;
@@ -52,8 +60,10 @@ void tokenize() {
             continue;
         }
 
-        if ('a' <= *p && *p <= 'z') {
-            cur = new_token(TK_IDENT, cur, p++, 1);
+        if (isalpha_(*p)) {
+            char * begin = p;
+            while (isalnum_(*p)) p++;
+            cur = new_token(TK_IDENT, cur, begin, p - begin);
             continue;
         }
 

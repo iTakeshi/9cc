@@ -52,5 +52,6 @@ try 0 "1 == 1 + 1;" # deduced to 1 == 2
 echo "===== Multiple Statements with Variables ====="
 try 3 "1; 2; 3;"
 try 14 "a = 3; b = 5 * 6 - 8; a + b / 2;"
+try 14 "foo = 3; bar = 5 * 6 - 8; foo + bar / 2;"
 
 echo "OK"

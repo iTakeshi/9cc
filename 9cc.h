@@ -1,10 +1,11 @@
 #include <stdbool.h>
+#include <stddef.h>
 
 typedef enum {
-    TK_RESERVED, // symbols
-    TK_IDENT,    // identifier
-    TK_NUM,      // integers
-    TK_EOF,      // EOF
+    TK_RESERVED,
+    TK_IDENT,
+    TK_NUM,
+    TK_EOF,
 } TokenKind;
 
 typedef struct Token Token;
@@ -15,6 +16,15 @@ struct Token {
     int val;
     char * str;
     size_t len;
+};
+
+typedef struct Local Local;
+
+struct Local {
+    Local * next;
+    char * name;
+    size_t len;
+    size_t offset;
 };
 
 typedef enum {
@@ -38,13 +48,14 @@ struct Node {
     Node * lhs;
     Node * rhs;
     int val;
-    int offset;
+    size_t offset;
 };
 
 // gloval variables
 extern Token * token;
 extern char * user_input;
 extern Node * code[100];
+extern Local * locals;
 
 // tokenize.c
 void tokenize();
@@ -53,7 +64,7 @@ void tokenize();
 void program();
 
 // codegen.c
-void gen(Node * node);
+void codegen();
 
 // util.c
 void error(char * fmt, ...);

@@ -11,11 +11,11 @@ bool consume(char * op) {
     return true;
 }
 
-char * consume_ident() {
+Token * consume_ident() {
     if (token->kind != TK_IDENT) {
         return NULL;
     }
-    char * res = token->str;
+    Token * res = token;
     token = token->next;
     return res;
 }
@@ -40,6 +40,13 @@ bool at_eof() {
     return token->kind == TK_EOF;
 }
 
+Local * find_var(Token * token) {
+    for (Local * local = locals; local; local = local->next) {
+        if (local->len == token->len && memcmp(local->name, token->str, local->len) == 0) return local;
+    }
+    return NULL;
+}
+
 Node * new_node(NodeKind kind, Node * lhs, Node * rhs) {
     Node * node = calloc(1, sizeof(Node));
     node->kind = kind;
@@ -55,13 +62,6 @@ Node * new_node_num(int val) {
     return node;
 }
 
-Node * new_var_node(char * name) {
-    Node * node = calloc(1, sizeof(Node));
-    node->kind = ND_VAR;
-    node->offset = (name[0] - 'a' + 1) * 8;
-    return node;
-}
-
 Node * expr();  // forward declaration
 
 Node * primary() {
@@ -71,9 +71,27 @@ Node * primary() {
         return node;
     }
 
-    char * name = consume_ident();
-    if (name) {
-        return new_var_node(name);
+    Token * token = consume_ident();
+    if (token) {
+        Node * node = calloc(1, sizeof(Node));
+        node->kind = ND_VAR;
+
+        Local * local = find_var(token);
+        if (!local) {
+            local = calloc(1, sizeof(Local));
+            local->next = locals;
+            local->name = token->str;
+            local->len = token->len;
+            if (local->next) {
+                local->offset = local->next->offset + 8;
+            } else {
+                local->offset = 0;
+            }
+            locals = local;
+        }
+        node->offset = local->offset;
+
+        return node;
     }
 
     return new_node_num(expect_number());
