@@ -35,6 +35,7 @@ typedef enum {
     ND_RETURN,
     ND_ASSIGN,
     ND_VAR,
+    ND_CALL,
     ND_NUM,
     ND_PRE_INC,
     ND_PRE_DEC,
@@ -69,6 +70,7 @@ struct Node {
 
     int val;
     size_t offset;
+    char * name;
 };
 
 // gloval variables

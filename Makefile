@@ -1,4 +1,4 @@
-CFLAGS=-std=c11 -g -static -W -Wall -Wextra -Werror
+CFLAGS=-std=gnu11 -g -static -W -Wall -Wextra -Werror  # gnu11 for strndup
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 

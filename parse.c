@@ -66,7 +66,7 @@ Node * expr();  // forward declaration
 
 /*
  * primary ::= "(" expr ")"
- *           | ident
+ *           | ident ("(" ")")?
  *           | num
  */
 Node * primary() {
@@ -78,25 +78,37 @@ Node * primary() {
 
     Token * token = consume_ident();
     if (token) {
-        Node * node = calloc(1, sizeof(Node));
-        node->kind = ND_VAR;
+        if (consume("(")) {
+            // function call
+            Node * node = calloc(1, sizeof(Node));
+            node->kind = ND_CALL;
+            node->name = strndup(token->str, token->len);
 
-        Local * local = find_var(token);
-        if (!local) {
-            local = calloc(1, sizeof(Local));
-            local->next = locals;
-            local->name = token->str;
-            local->len = token->len;
-            if (local->next) {
-                local->offset = local->next->offset + 8;
-            } else {
-                local->offset = 0;
+            expect(")");
+            return node;
+
+        } else {
+            // variable
+            Node * node = calloc(1, sizeof(Node));
+            node->kind = ND_VAR;
+
+            Local * local = find_var(token);
+            if (!local) {
+                local = calloc(1, sizeof(Local));
+                local->next = locals;
+                local->name = token->str;
+                local->len = token->len;
+                if (local->next) {
+                    local->offset = local->next->offset + 8;
+                } else {
+                    local->offset = 0;
+                }
+                locals = local;
             }
-            locals = local;
-        }
-        node->offset = local->offset;
+            node->offset = local->offset;
 
-        return node;
+            return node;
+        }
     }
 
     return new_node_num(expect_number());

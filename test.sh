@@ -1,11 +1,16 @@
 #!/bin/bash
 
+cat <<EOF | gcc -xc -c -o test_mock.o -
+int fn_arg0_1() { return 1; }
+int fn_arg0_2() { return 42; }
+EOF
+
 try() {
     expected="$1"
     input="$2"
 
     ./9cc "$input" > tmp.s
-    gcc -o tmp tmp.s
+    gcc -g -o tmp tmp.s test_mock.o
     ./tmp
     actual="$?"
 
@@ -75,5 +80,9 @@ try 10 "i = 0; while (i < 10) i = i + 1; return i;"
 try 55 "sum = 0; for (i = 1; i <= 10; i = i + 1) sum = sum + i; return sum;"
 try 42 "for (;;) return 42; return 0;"
 try 55 "i = 1; sum = 0; while (i <= 10) { sum = sum + i; i = i + 1; } return sum;"
+
+echo "===== Function ====="
+try 1 "fn_arg0_1();"
+try 45 "fn_arg0_2() + 3;"
 
 echo "OK"
