@@ -2,6 +2,7 @@
 
 typedef enum {
     TK_RESERVED, // symbols
+    TK_IDENT,    // identifier
     TK_NUM,      // integers
     TK_EOF,      // EOF
 } TokenKind;
@@ -17,6 +18,8 @@ struct Token {
 };
 
 typedef enum {
+    ND_ASSIGN,
+    ND_VAR,
     ND_ADD,
     ND_SUB,
     ND_MUL,
@@ -35,20 +38,23 @@ struct Node {
     Node * lhs;
     Node * rhs;
     int val;
+    int offset;
 };
 
 // gloval variables
 extern Token * token;
 extern char * user_input;
+extern Node * code[100];
 
 // tokenize.c
-Token * tokenize(char * p);
-bool consume();
-void expect();
-int expect_number();
+void tokenize();
 
 // parse.c
-Node * expr();
+void program();
 
 // codegen.c
 void gen(Node * node);
+
+// util.c
+void error(char * fmt, ...);
+void error_at(char * loc, char * fmt, ...);

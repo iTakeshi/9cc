@@ -1,47 +1,8 @@
 #include <ctype.h>
-#include <stdarg.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "9cc.h"
-
-void error_at(char * loc, char * fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-
-    int pos = loc - user_input;
-    fprintf(stderr, "%s\n", user_input);
-    fprintf(stderr, "%*s", pos, ""); // `pos` spaces
-    fprintf(stderr, "^ ");
-    vfprintf(stderr, fmt, ap);
-    fprintf(stderr, "\n");
-    exit(1);
-}
-
-bool consume(char * op) {
-    if (token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(op, token->str, token->len) != 0) {
-        return false;
-    }
-    token = token->next;
-    return true;
-}
-
-void expect(char * op) {
-    if (token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(op, token->str, token->len) != 0) {
-        error_at(token->str, "Unexpected character; expected '%c'", op);
-    }
-    token = token->next;
-}
-
-int expect_number() {
-    if (token->kind != TK_NUM) {
-        error_at(token->str, "Unexpected token; expected a number");
-    }
-    int val = token->val;
-    token = token->next;
-    return val;
-}
 
 Token * new_token(TokenKind kind, Token * cur, char * str, size_t len) {
     Token * tok = calloc(1, sizeof(Token));
@@ -52,11 +13,12 @@ Token * new_token(TokenKind kind, Token * cur, char * str, size_t len) {
     return tok;
 }
 
-Token * tokenize(char * p) {
+void tokenize() {
     Token head;
     head.next = NULL;
     Token * cur = &head;
 
+    char * p = user_input;  // retain user_input for display in error_at
     while (*p) {
         if (isspace(*p)) {
             p++;
@@ -82,9 +44,16 @@ Token * tokenize(char * p) {
                 *p == '*' ||
                 *p == '/' ||
                 *p == '(' ||
-                *p == ')'
+                *p == ')' ||
+                *p == '=' ||
+                *p == ';'
         ) {
             cur = new_token(TK_RESERVED, cur, p++, 1);
+            continue;
+        }
+
+        if ('a' <= *p && *p <= 'z') {
+            cur = new_token(TK_IDENT, cur, p++, 1);
             continue;
         }
 
@@ -98,5 +67,6 @@ Token * tokenize(char * p) {
     }
 
     new_token(TK_EOF, cur, p, 0);
-    return head.next;
+
+    token = head.next;
 }
