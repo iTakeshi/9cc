@@ -39,7 +39,11 @@ void tokenize() {
                 memcmp(p, "<=", 2) == 0 ||
                 memcmp(p, ">=", 2) == 0 ||
                 memcmp(p, "++", 2) == 0 ||
-                memcmp(p, "--", 2) == 0
+                memcmp(p, "--", 2) == 0 ||
+                memcmp(p, "+=", 2) == 0 ||
+                memcmp(p, "-=", 2) == 0 ||
+                memcmp(p, "*=", 2) == 0 ||
+                memcmp(p, "/=", 2) == 0
         ) {
             cur = new_token(TK_RESERVED, cur, p, 2);
             p += 2;
