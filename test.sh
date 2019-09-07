@@ -61,5 +61,6 @@ try 10 "if (1) 10;"
 try 10 "if (1) 10; else 20;"
 try 20 "if (0) 10; else 20;"
 try 11 "a = 1; if (a == 1) return b = a * 10 + 1;"
+try 10 "i = 0; while (i < 10) i = i + 1; return i;"
 
 echo "OK"

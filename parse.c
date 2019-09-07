@@ -195,6 +195,15 @@ Node * stmt() {
         node->els = NULL;
         if (consume("else")) node->els = stmt();
 
+    } else if (consume("while")) {
+        node = calloc(1, sizeof(Node));
+        node->kind = ND_WHILE;
+        expect("(");
+        node->cnd = expr();
+        expect(")");
+        node->thn = stmt();
+        node->els = NULL;
+
     } else if (consume("return")) {
         node = new_node(ND_RETURN, NULL, expr());
         expect(";");
