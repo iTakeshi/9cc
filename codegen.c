@@ -2,12 +2,33 @@
 
 #include "9cc.h"
 
+void gen_node(Node * node);  // forward declaration
+
 void gen_lval(Node * node) {
     if (node->kind != ND_VAR) error("lvalue is not a variable");
 
     printf("  mov rax, rbp\n");
     printf("  sub rax, %ld\n", node->offset);
     printf("  push rax\n");
+}
+
+void gen_binop(Node * node) {
+    if (
+            node->kind != ND_ADD &&
+            node->kind != ND_SUB &&
+            node->kind != ND_MUL &&
+            node->kind != ND_DIV &&
+            node->kind != ND_EQ &&
+            node->kind != ND_NE &&
+            node->kind != ND_LT &&
+            node->kind != ND_LE
+    ) error("node is not a binary operation");
+
+    gen_node(node->lhs);
+    gen_node(node->rhs);
+
+    printf("  pop rdi\n");
+    printf("  pop rax\n");
 }
 
 void gen_node(Node * node) {
@@ -90,63 +111,66 @@ void gen_node(Node * node) {
             printf("  push %d\n", node->val);
             return;
 
-        default:
-            break;
-    }
 
-    gen_node(node->lhs);
-    gen_node(node->rhs);
 
-    printf("  pop rdi\n");
-    printf("  pop rax\n");
 
-    switch (node->kind) {
         case ND_ADD:
+            gen_binop(node);
             printf("  add rax, rdi\n");
-            break;
+            printf("  push rax\n");
+            return;
 
         case ND_SUB:
+            gen_binop(node);
             printf("  sub rax, rdi\n");
-            break;
+            printf("  push rax\n");
+            return;
 
         case ND_MUL:
+            gen_binop(node);
             printf("  imul rax, rdi\n");
-            break;
+            printf("  push rax\n");
+            return;
 
         case ND_DIV:
+            gen_binop(node);
             printf("  cqo\n");
             printf("  idiv rdi\n");
-            break;
+            printf("  push rax\n");
+            return;
 
         case ND_EQ:
+            gen_binop(node);
             printf("  cmp rax, rdi\n");
             printf("  sete al\n");
             printf("  movzb rax, al\n");
-            break;
+            printf("  push rax\n");
+            return;
 
         case ND_NE:
+            gen_binop(node);
             printf("  cmp rax, rdi\n");
             printf("  setne al\n");
             printf("  movzb rax, al\n");
-            break;
+            printf("  push rax\n");
+            return;
 
         case ND_LT:
+            gen_binop(node);
             printf("  cmp rax, rdi\n");
             printf("  setl al\n");
             printf("  movzb rax, al\n");
-            break;
+            printf("  push rax\n");
+            return;
 
         case ND_LE:
+            gen_binop(node);
             printf("  cmp rax, rdi\n");
             printf("  setle al\n");
             printf("  movzb rax, al\n");
-            break;
-
-        default:
-            break;
+            printf("  push rax\n");
+            return;
     }
-
-    printf("  push rax\n");
 }
 
 size_t calc_stack_size() {
