@@ -64,5 +64,6 @@ try 11 "a = 1; if (a == 1) return b = a * 10 + 1;"
 try 10 "i = 0; while (i < 10) i = i + 1; return i;"
 try 55 "sum = 0; for (i = 1; i <= 10; i = i + 1) sum = sum + i; return sum;"
 try 42 "for (;;) return 42; return 0;"
+try 55 "i = 1; sum = 0; while (i <= 10) { sum = sum + i; i = i + 1; } return sum;"
 
 echo "OK"

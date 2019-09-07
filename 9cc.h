@@ -28,6 +28,7 @@ struct Local {
 };
 
 typedef enum {
+    ND_BLOCK,
     ND_IF,
     ND_WHILE,
     ND_FOR,
@@ -51,6 +52,7 @@ struct Node {
     NodeKind kind;
 
     Node * next;
+    Node * child;
 
     Node * lhs;
     Node * rhs;

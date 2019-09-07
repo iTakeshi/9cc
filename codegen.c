@@ -14,6 +14,13 @@ void gen_node(Node * node) {
     static size_t id = 0;
 
     switch (node->kind) {
+        case ND_BLOCK:
+            for (Node * statement = node->child; statement; statement = statement->next) {
+                gen_node(statement);
+                printf("  pop rax\n");
+            }
+            return;
+
         case ND_IF:
             id++;
             gen_node(node->cnd);

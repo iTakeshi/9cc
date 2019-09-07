@@ -185,7 +185,24 @@ Node * expr() {
 Node * stmt() {
     Node * node;
 
-    if (consume("if")) {
+    if (consume("{")) {
+        node = calloc(1, sizeof(Node));
+        node->kind = ND_BLOCK;
+        Node * cur = NULL;
+        while (!consume("}")) {
+            Node * next = stmt();
+            next->next = NULL;
+            if (cur) {
+                cur->next = next;
+                cur = next;
+            } else {
+                // retain head
+                node->child = next;
+                cur = node->child;
+            }
+        }
+
+    } else if (consume("if")) {
         node = calloc(1, sizeof(Node));
         node->kind = ND_IF;
         expect("(");
