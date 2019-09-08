@@ -33,6 +33,7 @@ typedef enum {
     ND_WHILE,
     ND_FOR,
     ND_RETURN,
+    ND_EXPR_STMT,
     ND_ASSIGN,
     ND_VAR,
     ND_CALL,

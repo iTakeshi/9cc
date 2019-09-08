@@ -36,10 +36,8 @@ void gen_node(Node * node) {
 
     switch (node->kind) {
         case ND_BLOCK:
-            for (Node * statement = node->child; statement; statement = statement->next) {
+            for (Node * statement = node->child; statement; statement = statement->next)
                 gen_node(statement);
-                printf("  pop rax\n");
-            }
             return;
 
         case ND_IF:
@@ -89,6 +87,11 @@ void gen_node(Node * node) {
             printf("  mov rsp, rbp\n");
             printf("  pop rbp\n");
             printf("  ret\n");
+            return;
+
+        case ND_EXPR_STMT:
+            gen_node(node->rhs);
+            printf("  pop rax\n");
             return;
 
         case ND_ASSIGN:
@@ -248,10 +251,8 @@ void codegen() {
     printf("  mov rbp, rsp\n");
     printf("  sub rsp, %ld\n", calc_stack_size());
 
-    for (Node * statement = program; statement; statement = statement->next) {
+    for (Node * statement = program; statement; statement = statement->next)
         gen_node(statement);
-        printf("  pop rax\n");
-    }
 
     printf("  mov rsp, rbp\n");
     printf("  pop rbp\n");

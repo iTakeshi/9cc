@@ -122,7 +122,7 @@ Node * primary() {
                 if (local->next) {
                     local->offset = local->next->offset + 8;
                 } else {
-                    local->offset = 0;
+                    local->offset = 8;
                 }
                 locals = local;
             }
@@ -347,7 +347,7 @@ Node * stmt() {
         expect(";");
 
     } else {
-        node = expr();
+        node = new_node(ND_EXPR_STMT, NULL, expr());
         expect(";");
     }
 
