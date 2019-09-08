@@ -70,7 +70,9 @@ struct Node {
 
     int val;
     size_t offset;
+
     char * name;
+    Node * args;
 };
 
 // gloval variables

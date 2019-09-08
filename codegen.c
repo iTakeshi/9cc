@@ -107,10 +107,20 @@ void gen_node(Node * node) {
             printf("  push rax\n");
             return;
 
-        case ND_CALL:
+        case ND_CALL: {
+            static char * reg[6] = { "rdi", "rsi", "rdx", "rcx", "r8", "r9" };
+            int i = 0;
+            for (Node * arg = node->args; arg; arg = arg->next, i++) {
+                if (i >= 6) error("Arguments more than 6 are not supported");
+                gen_node(arg);
+            }
+            for (int j = i - 1; j >= 0; j--) printf("  pop %s\n", reg[j]);
+
+            printf("  and rsp, 0xfffffffffffffff0\n");  // align rsp to 16-byte boundary
             printf("  call %s\n", node->name);
             printf("  push rax\n");
             return;
+        }
 
         case ND_NUM:
             printf("  push %d\n", node->val);

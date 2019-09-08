@@ -62,11 +62,33 @@ Node * new_node_num(int val) {
     return node;
 }
 
-Node * expr();  // forward declaration
+// forward declarations
+Node * expr();
+Node * assign();
+
+/*
+ * call_args ::= assign*
+ */
+Node * call_args() {
+    if (consume(")")) return NULL;
+
+    Node * head = assign();
+    head->next = NULL;
+    Node * cur = head;
+    while (consume(",")) {
+        Node * next = assign();
+        next->next = NULL;
+        cur->next = next;
+        cur = next;
+    }
+    expect(")");
+
+    return head;
+}
 
 /*
  * primary ::= "(" expr ")"
- *           | ident ("(" ")")?
+ *           | ident ("(" call_args ")")?
  *           | num
  */
 Node * primary() {
@@ -83,8 +105,7 @@ Node * primary() {
             Node * node = calloc(1, sizeof(Node));
             node->kind = ND_CALL;
             node->name = strndup(token->str, token->len);
-
-            expect(")");
+            node->args = call_args();
             return node;
 
         } else {

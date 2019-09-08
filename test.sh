@@ -1,8 +1,22 @@
 #!/bin/bash
 
 cat <<EOF | gcc -xc -c -o test_mock.o -
-int fn_arg0_1() { return 1; }
-int fn_arg0_2() { return 42; }
+#include <stdio.h>
+long fn_arg0_0() { return 1; }
+long fn_arg0_1() { return 42; }
+long fn_arg1_0(long a) { return a; }
+long fn_arg1_1(long a) { return a + 10; }
+long fn_arg2_0(long a, long b) { return a + b; }
+long fn_arg3_0(long a, long b, long c) { return a + b + c; }
+long fn_arg4_0(long a, long b, long c, long d) { return a + b + c + d; }
+long fn_arg5_0(long a, long b, long c, long d, long e) { return a + b + c + d + e; }
+long fn_arg6_0(long a, long b, long c, long d, long e, long f) { return a + b + c + d + e + f; }
+long fn_arg6_1(long a, long b, long c, long d, long e, long f) { return a; }
+long fn_arg6_2(long a, long b, long c, long d, long e, long f) { return b; }
+long fn_arg6_3(long a, long b, long c, long d, long e, long f) { return c; }
+long fn_arg6_4(long a, long b, long c, long d, long e, long f) { return d; }
+long fn_arg6_5(long a, long b, long c, long d, long e, long f) { return e; }
+long fn_arg6_6(long a, long b, long c, long d, long e, long f) { return f; }
 EOF
 
 try() {
@@ -82,7 +96,20 @@ try 42 "for (;;) return 42; return 0;"
 try 55 "i = 1; sum = 0; while (i <= 10) { sum = sum + i; i = i + 1; } return sum;"
 
 echo "===== Function ====="
-try 1 "fn_arg0_1();"
-try 45 "fn_arg0_2() + 3;"
+try  1 "fn_arg0_0();"
+try 45 "fn_arg0_1() + 3;"
+try  1 "fn_arg1_0(1);"
+try 11 "fn_arg1_1(1);"
+try  3 "fn_arg2_0(1, 2);"
+try  6 "fn_arg3_0(1, 2, 3);"
+try 10 "fn_arg4_0(1, 2, 3, 4);"
+try 15 "fn_arg5_0(1, 2, 3, 4, 5);"
+try 21 "fn_arg6_0(1, 2, 3, 4, 5, 6);"
+try  1 "fn_arg6_1(1, 2, 3, 4, 5, 6);"
+try  2 "fn_arg6_2(1, 2, 3, 4, 5, 6);"
+try  3 "fn_arg6_3(1, 2, 3, 4, 5, 6);"
+try  4 "fn_arg6_4(1, 2, 3, 4, 5, 6);"
+try  5 "fn_arg6_5(1, 2, 3, 4, 5, 6);"
+try  6 "fn_arg6_6(1, 2, 3, 4, 5, 6);"
 
 echo "OK"
