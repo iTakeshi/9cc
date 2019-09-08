@@ -12,7 +12,7 @@ void error(char * fmt, ...) {
     exit(1);
 }
 
-void error_at(char * loc, char * fmt, ...) {
+void error_at(char * user_input, char * loc, char * fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
 

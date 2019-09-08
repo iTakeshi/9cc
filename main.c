@@ -1,8 +1,5 @@
 #include "9cc.h"
 
-Token * token;
-char * user_input;
-Node * program = NULL;
 Local * locals = NULL;
 
 int main(int argc, char ** argv) {
@@ -10,10 +7,9 @@ int main(int argc, char ** argv) {
         error("Wrong number of arguments.");
     }
 
-    user_input = argv[1];
-    tokenize();
-    parse();
-    codegen();
+    Token * token = tokenize(argv[1]);
+    Node * program = parse(token, argv[1]);
+    codegen(program);
 
     return 0;
 }

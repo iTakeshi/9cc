@@ -3,6 +3,9 @@
 
 #include "9cc.h"
 
+static Token * token;
+static char * user_input;
+
 bool consume(char * str) {
     if (token->kind != TK_RESERVED || strlen(str) != token->len || memcmp(str, token->str, token->len) != 0) {
         return false;
@@ -22,14 +25,14 @@ Token * consume_ident() {
 
 void expect(char * str) {
     if (token->kind != TK_RESERVED || strlen(str) != token->len || memcmp(str, token->str, token->len) != 0) {
-        error_at(token->str, "Unexpected character; expected '%s'", str);
+        error_at(user_input, token->str, "Unexpected character; expected '%s'", str);
     }
     token = token->next;
 }
 
 int expect_number() {
     if (token->kind != TK_NUM) {
-        error_at(token->str, "Unexpected token; expected a number");
+        error_at(user_input, token->str, "Unexpected token; expected a number");
     }
     int val = token->val;
     token = token->next;
@@ -357,7 +360,11 @@ Node * stmt() {
 /*
  * program ::= stmt*
  */
-void parse() {
+Node * parse(Token * _token, char * _user_input) {
+    token = _token;
+    user_input = _user_input;
+
+    Node * program = NULL;
     Node * cur = NULL;
     while (!at_eof()) {
         Node * next = stmt();
@@ -368,7 +375,8 @@ void parse() {
         } else {
             // retain head
             program = next;
-            cur = program;
+            cur = next;
         }
     }
+    return program;
 }

@@ -242,7 +242,7 @@ size_t calc_stack_size() {
     return count * 8;
 }
 
-void codegen() {
+void codegen(Node * program) {
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");

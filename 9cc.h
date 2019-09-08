@@ -77,20 +77,17 @@ struct Node {
 };
 
 // gloval variables
-extern Token * token;
-extern char * user_input;
-extern Node * program;
 extern Local * locals;
 
 // tokenize.c
-void tokenize();
+Token * tokenize(char * user_input);
 
 // parse.c
-void parse();
+Node * parse(Token * token, char * user_input);
 
 // codegen.c
-void codegen();
+void codegen(Node * program);
 
 // util.c
 void error(char * fmt, ...);
-void error_at(char * loc, char * fmt, ...);
+void error_at(char * user_input, char * loc, char * fmt, ...);

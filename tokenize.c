@@ -21,7 +21,7 @@ Token * new_token(TokenKind kind, Token * cur, char * str, size_t len) {
     return tok;
 }
 
-void tokenize() {
+Token * tokenize(char * user_input) {
     Token head;
     head.next = NULL;
     Token * cur = &head;
@@ -112,10 +112,9 @@ void tokenize() {
             continue;
         }
 
-        error_at(p, "Cannot tokenize");
+        error_at(user_input, p, "Cannot tokenize");
     }
 
     new_token(TK_EOF, cur, p, 0);
-
-    token = head.next;
+    return head.next;
 }
