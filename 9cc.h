@@ -76,17 +76,22 @@ struct Node {
     Node * args;
 };
 
-// gloval variables
-extern Local * locals;
+typedef struct Function Function;
+
+struct Function {
+    char * name;
+    Node * body;
+    Local * locals;
+};
 
 // tokenize.c
 Token * tokenize(char * user_input);
 
 // parse.c
-Node * parse(Token * token, char * user_input);
+Function * parse(Token * token, char * user_input);
 
 // codegen.c
-void codegen(Node * program);
+void codegen(Function * program);
 
 // util.c
 void error(char * fmt, ...);

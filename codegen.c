@@ -236,22 +236,22 @@ void gen_node(Node * node) {
     }
 }
 
-size_t calc_stack_size() {
+size_t calc_stack_size(Local * locals) {
     size_t count = 0;
     for (Local * local = locals; local; local = local->next) count++;
     return count * 8;
 }
 
-void codegen(Node * program) {
+void codegen(Function * program) {
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
 
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    printf("  sub rsp, %ld\n", calc_stack_size());
+    printf("  sub rsp, %ld\n", calc_stack_size(program->locals));
 
-    for (Node * statement = program; statement; statement = statement->next)
+    for (Node * statement = program->body; statement; statement = statement->next)
         gen_node(statement);
 
     printf("  mov rsp, rbp\n");

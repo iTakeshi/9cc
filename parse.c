@@ -5,6 +5,7 @@
 
 static Token * token;
 static char * user_input;
+static Local * locals;
 
 bool consume(char * str) {
     if (token->kind != TK_RESERVED || strlen(str) != token->len || memcmp(str, token->str, token->len) != 0) {
@@ -360,11 +361,14 @@ Node * stmt() {
 /*
  * program ::= stmt*
  */
-Node * parse(Token * _token, char * _user_input) {
+Function * parse(Token * _token, char * _user_input) {
     token = _token;
     user_input = _user_input;
+    locals = NULL;
 
-    Node * program = NULL;
+    Function * program = calloc(1, sizeof(Function));
+    program->name = "main";
+
     Node * cur = NULL;
     while (!at_eof()) {
         Node * next = stmt();
@@ -374,9 +378,11 @@ Node * parse(Token * _token, char * _user_input) {
             cur = next;
         } else {
             // retain head
-            program = next;
+            program->body = next;
             cur = next;
         }
     }
+
+    program->locals = locals;
     return program;
 }
