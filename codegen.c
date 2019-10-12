@@ -2,6 +2,8 @@
 
 #include "9cc.h"
 
+Function * fn;
+
 void gen_node(Node * node);  // forward declaration
 
 void gen_lval(Node * node) {
@@ -84,14 +86,13 @@ void gen_node(Node * node) {
         case ND_RETURN:
             gen_node(node->rhs);
             printf("  pop rax\n");
-            printf("  mov rsp, rbp\n");
-            printf("  pop rbp\n");
-            printf("  ret\n");
+            printf("  jmp .Lreturn%s\n", fn->name);
             return;
 
         case ND_EXPR_STMT:
             gen_node(node->rhs);
             printf("  pop rax\n");
+            printf("  mov rax, 0\n");
             return;
 
         case ND_ASSIGN:
@@ -244,17 +245,21 @@ size_t calc_stack_size(Local * locals) {
 
 void codegen(Function * program) {
     printf(".intel_syntax noprefix\n");
-    printf(".global main\n");
-    printf("main:\n");
 
-    printf("  push rbp\n");
-    printf("  mov rbp, rsp\n");
-    printf("  sub rsp, %ld\n", calc_stack_size(program->locals));
+    for (fn = program; fn; fn = fn->next) {
+        printf(".global %s\n", fn->name);
+        printf("%s:\n", fn->name);
 
-    for (Node * statement = program->body; statement; statement = statement->next)
-        gen_node(statement);
+        printf("  push rbp\n");
+        printf("  mov rbp, rsp\n");
+        printf("  sub rsp, %ld\n", calc_stack_size(fn->locals));
 
-    printf("  mov rsp, rbp\n");
-    printf("  pop rbp\n");
-    printf("  ret\n");
+        for (Node * statement = fn->body; statement; statement = statement->next)
+            gen_node(statement);
+
+        printf(".Lreturn%s:\n", fn->name);
+        printf("  mov rsp, rbp\n");
+        printf("  pop rbp\n");
+        printf("  ret\n");
+    }
 }

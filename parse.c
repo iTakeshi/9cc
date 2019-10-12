@@ -40,6 +40,15 @@ int expect_number() {
     return val;
 }
 
+char * expect_ident() {
+    if (token->kind != TK_IDENT) {
+        error_at(user_input, token->str, "Unexpected token; expected a identifier");
+    }
+    char * str = strndup(token->str, token->len);
+    token = token->next;
+    return str;
+}
+
 bool at_eof() {
     return token->kind == TK_EOF;
 }
@@ -359,18 +368,20 @@ Node * stmt() {
 }
 
 /*
- * program ::= stmt*
+ * function ::= ident "(" param* ")" "{" stmt* "}"
  */
-Function * parse(Token * _token, char * _user_input) {
-    token = _token;
-    user_input = _user_input;
+Function * function() {
     locals = NULL;
 
-    Function * program = calloc(1, sizeof(Function));
-    program->name = "main";
+    Function * fn = calloc(1, sizeof(Function));
+    fn->name = expect_ident();
+
+    expect("(");
+    expect(")");
+    expect("{");
 
     Node * cur = NULL;
-    while (!at_eof()) {
+    while (!consume("}")) {
         Node * next = stmt();
         next->next = NULL;
         if (cur) {
@@ -378,11 +389,36 @@ Function * parse(Token * _token, char * _user_input) {
             cur = next;
         } else {
             // retain head
-            program->body = next;
+            fn->body = next;
             cur = next;
         }
     }
 
-    program->locals = locals;
-    return program;
+    fn->locals = locals;
+    return fn;
+}
+
+/*
+ * program ::= function*
+ */
+Function * parse(Token * _token, char * _user_input) {
+    token = _token;
+    user_input = _user_input;
+
+    Function * head;
+    Function * cur = NULL;
+    while (!at_eof()) {
+        Function * next = function();
+        next->next = NULL;
+        if (cur) {
+            cur->next = next;
+            cur = next;
+        } else {
+            // retain head
+            head = next;
+            cur = next;
+        }
+    }
+
+    return head;
 }
