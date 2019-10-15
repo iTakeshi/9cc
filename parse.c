@@ -8,45 +8,38 @@ static char * user_input;
 static Local * locals;
 
 bool consume(char * str) {
-    if (token->kind != TK_RESERVED || strlen(str) != token->len || memcmp(str, token->str, token->len) != 0) {
+    if (token->kind != TK_RESERVED || strlen(str) != token->len || memcmp(str, token->str, token->len) != 0)
         return false;
-    }
     token = token->next;
     return true;
 }
 
+void expect(char * str) {
+    if (!consume(str))
+        error_at(user_input, token->str, "Unexpected character; expected '%s'", str);
+}
+
 Token * consume_ident() {
-    if (token->kind != TK_IDENT) {
+    if (token->kind != TK_IDENT)
         return NULL;
-    }
     Token * res = token;
     token = token->next;
     return res;
 }
 
-void expect(char * str) {
-    if (token->kind != TK_RESERVED || strlen(str) != token->len || memcmp(str, token->str, token->len) != 0) {
-        error_at(user_input, token->str, "Unexpected character; expected '%s'", str);
-    }
-    token = token->next;
+Token * expect_ident() {
+    Token * res = consume_ident();
+    if (!res)
+        error_at(user_input, token->str, "Unexpected token; expected a identifier");
+    return res;
 }
 
 int expect_number() {
-    if (token->kind != TK_NUM) {
+    if (token->kind != TK_NUM)
         error_at(user_input, token->str, "Unexpected token; expected a number");
-    }
     int val = token->val;
     token = token->next;
     return val;
-}
-
-char * expect_ident() {
-    if (token->kind != TK_IDENT) {
-        error_at(user_input, token->str, "Unexpected token; expected a identifier");
-    }
-    char * str = strndup(token->str, token->len);
-    token = token->next;
-    return str;
 }
 
 bool at_eof() {
@@ -374,7 +367,8 @@ Function * function() {
     locals = NULL;
 
     Function * fn = calloc(1, sizeof(Function));
-    fn->name = expect_ident();
+    Token * token = expect_ident();
+    fn->name = strndup(token->str, token->len);
 
     expect("(");
     expect(")");
